@@ -21,6 +21,7 @@
       surname: item.surname,
       email: item.email,
       mobile: item.mobile,
+      cvid: item.cloudFile.id, // Assuming the CV file ID is accessible via 'item.cloudFile.id'
     }));
 
     const columns = [
@@ -39,7 +40,9 @@
           button.className = "btn btn-primary";
           button.addEventListener("click", function () {
             // Handle the button click event
-            viewCV(options.data.id);
+            if (options.data.cvid) {
+              viewCV(options.data.cvid);
+            }
           });
           container.appendChild(button);
         },
@@ -83,28 +86,29 @@
     });
   });
 
-  async function viewCV(candidateId) {
+  async function viewCV(candidateCVId) {
     try {
       const response = await fetch(
-        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+        `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
       );
       if (response.ok) {
-        const cvData = await response.json();
-        selectedCandidateId = candidateId;
+        const cvFile = await response.blob();
+        const url = URL.createObjectURL(cvFile);
+        selectedCandidateId = candidateCVId;
         isCVModalOpen = true;
-        showModal(cvData.cloudFile.id);
+        showModal(url);
       } else {
-        throw new Error("Fail to fetch CV file");
+        throw new Error("Failed to fetch CV file");
       }
     } catch (error) {
       console.error(error);
     }
   }
 
-  function showModal(cvid) {
+  function showModal(cvUrl) {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<a href="https://api.recruitly.io/api/cloud/${cvid}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA" target="_blank">Download CV</a>`;
+    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
     modalElement.classList.add("show");
     modalElement.style.display = "block";
     modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
