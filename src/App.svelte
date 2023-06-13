@@ -89,12 +89,10 @@
         `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
       );
       if (response.ok) {
-        const cvFile = await response.blob();
-        // Handle the CV file here
-        const url = URL.createObjectURL(cvFile);
+        const cvData = await response.json();
         selectedCandidateId = candidateId;
         isCVModalOpen = true;
-        showModal(url);
+        showModal(cvData);
       } else {
         throw new Error("Failed to fetch CV file");
       }
@@ -103,10 +101,10 @@
     }
   }
 
-  function showModal(cvUrl) {
+  function showModal(cvData) {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
+    modalBody.innerText = JSON.stringify(cvData, null, 2);
     modalElement.classList.add("show");
     modalElement.style.display = "block";
     modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
@@ -115,7 +113,7 @@
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = "";
+    modalBody.innerText = "";
     modalElement.classList.remove("show");
     modalElement.style.display = "none";
     modalElement.style.backgroundColor = "transparent";
@@ -143,7 +141,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body"></div>
+      <pre class="modal-body" style="overflow-x: auto;"></pre>
     </div>
   </div>
 </div>
