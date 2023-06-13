@@ -33,6 +33,7 @@
         caption: "Actions",
         width: 100,
         cellTemplate: (container, options) => {
+          console.log(cvText);
           const link = document.createElement("a");
           link.href = "#";
           link.innerHTML = "Download CV";
