@@ -46,7 +46,7 @@
             const url = window.URL.createObjectURL(cvBlob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "CV.pdf";
+            a.download = "CV.txt";
             a.click();
             window.URL.revokeObjectURL(url);
           });
