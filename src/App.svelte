@@ -50,7 +50,7 @@
             // Create a temporary link element
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "CV.txt";
+            link.download = "CV.pdf";
             link.click();
 
             // Clean up the temporary link
