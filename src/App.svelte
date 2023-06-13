@@ -36,8 +36,11 @@
             );
             if (cvInfoResponse.ok) {
               const cvInfoData = await cvInfoResponse.json();
-              const cvid = cvInfoData.cvid;
-              console.log(cvInfoData);
+              console.log(cvInfoData); // Log the cvInfoData object to the console
+
+              const cvid = cvInfoData.cloudFile.id;
+              console.log(cvid); // Log the cvid value to the console
+
               if (cvid) {
                 downloadCv(cvid);
               } else {
