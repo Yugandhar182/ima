@@ -84,24 +84,29 @@
   });
 
   async function viewCV(candidateId) {
-    try {
-      const response = await fetch(
-        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
-      );
-      if (response.ok) {
-        const cvFile = await response.blob();
-        // Handle the CV file here
-        const url = URL.createObjectURL(cvFile);
+  try {
+    const response = await fetch(
+      `https://api.recruitly.io/api/candidate/${candidateId}?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154`
+    );
+    if (response.ok) {
+      const candidateData = await response.json();
+      const cvUrl = candidateData.cvUrl; // Adjust the property name according to your API response
+
+      if (cvUrl) {
         selectedCandidateId = candidateId;
         isCVModalOpen = true;
-        showModal(url);
+        showModal(cvUrl);
       } else {
-        throw new Error("Failed to fetch CV file");
+        throw new Error("CV URL not found in the response");
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      throw new Error("Failed to fetch candidate data");
     }
+  } catch (error) {
+    console.error(error);
   }
+}
+
 
   function showModal(cvUrl) {
     const modalElement = document.getElementById("cvModal");
