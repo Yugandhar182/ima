@@ -30,13 +30,35 @@
       {
         caption: "Actions",
         cellTemplate: function (container, options) {
-          const link = document.createElement("a");
-          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
-          link.target = "_blank";
-          link.innerText = "View CV";
-          link.addEventListener("click", async (event) => {
+          const downloadLink = document.createElement("a");
+          downloadLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          downloadLink.target = "_blank";
+          downloadLink.download = `CV_${options.data.id}.pdf`;
+          downloadLink.innerText = "Download CV";
+          downloadLink.addEventListener("click", async (event) => {
             event.preventDefault();
-            const cvResponse = await fetch(link.href);
+            const cvResponse = await fetch(downloadLink.href);
+            if (cvResponse.ok) {
+              const cvBlob = await cvResponse.blob();
+              const cvUrl = URL.createObjectURL(cvBlob);
+              const cvLink = document.createElement("a");
+              cvLink.href = cvUrl;
+              cvLink.download = downloadLink.download;
+              cvLink.click();
+              URL.revokeObjectURL(cvUrl);
+            } else {
+              alert("Failed to fetch CV file.");
+            }
+          });
+          container.appendChild(downloadLink);
+
+          const viewLink = document.createElement("a");
+          viewLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          viewLink.target = "_blank";
+          viewLink.innerText = "View CV";
+          viewLink.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const cvResponse = await fetch(viewLink.href);
             if (cvResponse.ok) {
               const cvData = await cvResponse.json();
               const cvHtml = cvData.html;
@@ -51,7 +73,7 @@
               alert("Failed to fetch CV file.");
             }
           });
-          container.appendChild(link);
+          container.appendChild(viewLink);
         },
         width: 150,
       },
@@ -103,6 +125,6 @@
   }
 </style>
 
-<h1 style="color:blue;">Job Candidate Details</h1>
+<h1 style="color: blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
