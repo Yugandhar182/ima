@@ -163,7 +163,10 @@
     max-height: 80%;
     overflow-y: auto;
     text-align: center;
-    position: relative;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .cv-popup-close {
@@ -173,6 +176,11 @@
     cursor: pointer;
   }
 </style>
+
+<h1 style="color: blue;">Job Candidate Details</h1>
+
+<div id="dataGrid"></div>
+
 
 <h1 style="color: blue;">Job Candidate Details</h1>
 
