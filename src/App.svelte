@@ -94,7 +94,7 @@
         isCVModalOpen = true;
         showModal(cvData.cloudFile.id);
       } else {
-        throw new Error("Failed to fetch CV file");
+        throw new Error("Fail to fetch CV file");
       }
     } catch (error) {
       console.error(error);
