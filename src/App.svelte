@@ -31,7 +31,7 @@
       {
         caption: "Actions",
         width: 100,
-        cellTemplate: function (container, options) {
+        cellTemplate: (container, options) => {
           const link = document.createElement("a");
           link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
           link.innerHTML = "Download CV";
@@ -39,8 +39,10 @@
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", () => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent the default link behavior
             link.click(); // Programmatically trigger the click event to initiate the download
+            return false; // Prevent the link from being followed
           });
         },
       },
