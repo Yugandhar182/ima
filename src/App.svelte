@@ -31,7 +31,7 @@
         caption: "Actions",
         cellTemplate: function (container, options) {
           const downloadLink = document.createElement("a");
-          downloadLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          downloadLink.href = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${options.data.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
           downloadLink.target = "_blank";
           downloadLink.download = `CV_${options.data.id}.pdf`;
           downloadLink.innerText = "Download CV";
@@ -176,11 +176,6 @@
     cursor: pointer;
   }
 </style>
-
-<h1 style="color: blue;">Job Candidate Details</h1>
-
-<div id="dataGrid"></div>
-
 
 <h1 style="color: blue;">Job Candidate Details</h1>
 
