@@ -37,7 +37,7 @@
             if (cvInfoResponse.ok) {
               const cvInfoData = await cvInfoResponse.json();
               const cvid = cvInfoData.cvid;
-              console.log(cvid);
+              console.log(cvInfoData);
               if (cvid) {
                 downloadCv(cvid);
               } else {
