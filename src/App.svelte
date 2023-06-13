@@ -37,15 +37,8 @@
             if (cvInfoResponse.ok) {
               const cvInfoData = await cvInfoResponse.json();
               const cvid = cvInfoData.cvid;
-              
-              if (cvid) {
-                downloadCv(cvid);
-              } else {
-                alert("CV file not found.");
-              }
-            } else {
-              alert("Failed to fetch CV file information.");
             }
+            
           };
 
           const downloadCv = async (cvid) => {
@@ -69,7 +62,7 @@
           downloadButton.innerText = "Download CV";
           downloadButton.addEventListener("click", getCvInfo);
           container.appendChild(downloadButton);
-          console.log(cvid); // Move this line below the cvid assignment
+         
         },
         width: 150,
       },
