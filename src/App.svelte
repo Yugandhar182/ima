@@ -104,13 +104,28 @@
   }
 
   function showModal(base64String) {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<object data="data:application/pdf;base64,${base64String}" type="application/pdf" width="100%" height="100%"></object>`;
-    modalElement.classList.add("show");
-    modalElement.style.display = "block";
-    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-  }
+  const modalElement = document.getElementById("cvModal");
+  const modalBody = modalElement.querySelector(".modal-body");
+  
+  // Create a data URL from the base64 string
+  const dataURL = `data:application/pdf;base64,${base64String}`;
+  
+  // Create an <object> element with the data URL as the src attribute
+  const objectElement = document.createElement("object");
+  objectElement.setAttribute("data", dataURL);
+  objectElement.setAttribute("type", "application/pdf");
+  objectElement.setAttribute("width", "100%");
+  objectElement.setAttribute("height", "100%");
+  
+  // Append the <object> element to the modal body
+  modalBody.innerHTML = "";
+  modalBody.appendChild(objectElement);
+
+  // Show the modal
+  modalElement.classList.add("show");
+  modalElement.style.display = "block";
+  modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+}
 
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
