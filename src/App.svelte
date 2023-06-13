@@ -89,11 +89,12 @@
         `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
       );
       if (response.ok) {
-        const cvData = await response.text();
-        const decodedCV = atob(cvData);
+        const cvFile = await response.blob();
+        // Handle the CV file here
+        const url = URL.createObjectURL(cvFile);
         selectedCandidateId = candidateId;
         isCVModalOpen = true;
-        showModal(decodedCV);
+        showModal(url);
       } else {
         throw new Error("Failed to fetch CV file");
       }
@@ -102,10 +103,10 @@
     }
   }
 
-  function showModal(cvData) {
+  function showModal(cvUrl) {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = cvData;
+    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
     modalElement.classList.add("show");
     modalElement.style.display = "block";
     modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
