@@ -5,6 +5,7 @@
 
   let jsonData = [];
   let gridData = [];
+  let selectedCandidateCV = null;
 
   onMount(async () => {
     const response = await fetch(
@@ -30,28 +31,13 @@
       {
         caption: "Actions",
         cellTemplate: function (container, options) {
-          const link = document.createElement("a");
-          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
-          link.target = "_blank";
-          link.innerText = "View CV";
-          link.addEventListener("click", async (event) => {
-            event.preventDefault();
-            const cvResponse = await fetch(link.href);
-            if (cvResponse.ok) {
-              const cvData = await cvResponse.json();
-              const cvHtml = cvData.html;
-              if (cvHtml) {
-                const cvWindow = window.open("", "_blank");
-                cvWindow.document.write(cvHtml);
-                cvWindow.document.close();
-              } else {
-                alert("CV file not found.");
-              }
-            } else {
-              alert("Failed to fetch CV file.");
-            }
+          const button = document.createElement("button");
+          button.innerText = "View CV";
+          button.className = "btn btn-primary";
+          button.addEventListener("click", function () {
+            viewCV(options.data.id);
           });
-          container.appendChild(link);
+          container.appendChild(button);
         },
         width: 150,
       },
@@ -95,6 +81,37 @@
       }
     );
   });
+
+  async function viewCV(candidateId) {
+    try {
+      const response = await fetch(
+        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+      );
+      if (response.ok) {
+        const cvData = await response.json();
+        selectedCandidateCV = cvData;
+        openCVModal();
+      } else {
+        throw new Error("Failed to fetch CV file");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function openCVModal() {
+    const modalElement = document.getElementById("cvModal");
+    const modalBody = modalElement.querySelector(".modal-body");
+    modalBody.innerText = JSON.stringify(selectedCandidateCV, null, 2);
+    modalElement.classList.add("show");
+    modalElement.style.display = "block";
+  }
+
+  function closeCVModal() {
+    const modalElement = document.getElementById("cvModal");
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+  }
 </script>
 
 <style>
@@ -106,3 +123,20 @@
 <h1 style="color:blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
+
+<div id="cvModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CV Information</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          onclick={() => closeCVModal()}
+        ></button>
+      </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
