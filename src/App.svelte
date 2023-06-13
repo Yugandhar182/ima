@@ -38,9 +38,9 @@
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", async (cloudFileId) => {
+          link.addEventListener("click", async () => {
             const cvResponse = await fetch(
-              `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cloudFileId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
+              `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
             );
             const cvBlob = await cvResponse.blob();
             const url = window.URL.createObjectURL(cvBlob);
@@ -96,4 +96,7 @@
     height: 400px;
   }
 </style>
+
+<h1 style="color:blue;">Job Candidate Details</h1>
+
 <div id="dataGrid"></div>
