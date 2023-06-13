@@ -31,7 +31,6 @@
         caption: "Actions",
         cellTemplate: function (container, options) {
           const getCvInfo = async () => {
-            console.log(cvid);
             const cvInfoResponse = await fetch(
               `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
             );
@@ -70,6 +69,7 @@
           downloadButton.innerText = "Download CV";
           downloadButton.addEventListener("click", getCvInfo);
           container.appendChild(downloadButton);
+          console.log(cvid); // Move this line below the cvid assignment
         },
         width: 150,
       },
