@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import "bootstrap/dist/css/bootstrap.min.css";
   import DevExpress from "devextreme";
+  import jsPDF from "jspdf";
 
   let jsonData = [];
   let gridData = [];
@@ -38,17 +39,13 @@
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", async () => {
-            const cvResponse = await fetch(
-              `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
-            );
-            const cvBlob = await cvResponse.blob();
-            const url = window.URL.createObjectURL(cvBlob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "CV.txt";
-            a.click();
-            window.URL.revokeObjectURL(url);
+          link.addEventListener("click", () => {
+            const doc = new jsPDF();
+            doc.text(`Candidate ID: ${options.data.id}`, 10, 10);
+            doc.text(`Full Name: ${options.data.firstName} ${options.data.surname}`, 10, 20);
+            doc.text(`Email: ${options.data.email}`, 10, 30);
+            doc.text(`Mobile: ${options.data.mobile}`, 10, 40);
+            doc.save("CV.pdf");
           });
         },
       },
