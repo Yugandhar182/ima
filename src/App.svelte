@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import "bootstrap/dist/css/bootstrap.min.css";
   import DevExpress from "devextreme";
+  import { PDFDocument } from "pdf-lib";
 
   let jsonData = [];
   let gridData = [];
@@ -42,12 +43,39 @@
             const cvResponse = await fetch(
               `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
             );
-            const cvBlob = await cvResponse.blob();
-            const url = window.URL.createObjectURL(cvBlob);
+            const cvText = await cvResponse.text();
+
+            // Create a new PDF document
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage();
+
+            // Embed the CV text into the PDF document
+            page.drawText(cvText, {
+              x: 50,
+              y: page.getHeight() - 50,
+              size: 12,
+              maxWidth: 500,
+              maxHeight: 500,
+              font: await pdfDoc.embedFont("Helvetica"),
+              color: rgb(0, 0, 0),
+            });
+
+            // Generate the PDF file
+            const pdfBytes = await pdfDoc.save();
+
+            // Create a Blob from the PDF bytes
+            const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+
+            // Create a URL for the Blob
+            const url = window.URL.createObjectURL(pdfBlob);
+
+            // Create a temporary link element to trigger the download
             const a = document.createElement("a");
             a.href = url;
-            a.download = "CV.pdf"; // Set the file name to CV.pdf
+            a.download = "CV.pdf";
             a.click();
+
+            // Revoke the URL to release the object URL
             window.URL.revokeObjectURL(url);
           });
         },
