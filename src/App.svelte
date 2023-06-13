@@ -29,11 +29,12 @@
       { dataField: "mobile", caption: "Mobile", width: 150 },
       {
         caption: "Actions",
+        width:100,
         cellTemplate: function (container, options) {
           const downloadLink = document.createElement("a");
-          downloadLink.href = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${options.data.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+          downloadLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
           downloadLink.target = "_blank";
-          downloadLink.download = `CV_${options.data.id}.txt`;
+          downloadLink.download = `CV_${options.data.id}.pdf`;
           downloadLink.innerText = "Download CV";
           downloadLink.addEventListener("click", async (event) => {
             event.preventDefault();
@@ -53,7 +54,7 @@
           container.appendChild(downloadLink);
 
           const viewLink = document.createElement("a");
-          viewLink.href = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${options.data.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+          viewLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
           viewLink.target = "_blank";
           viewLink.innerText = "View CV";
           viewLink.addEventListener("click", async (event) => {
