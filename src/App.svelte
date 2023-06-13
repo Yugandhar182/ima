@@ -101,10 +101,10 @@
     }
   }
 
-  function showModal(cvFileId) {
+  function showModal(cvid) {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<a href="https://api.recruitly.io/api/cloud/${cvFileId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA" target="_blank">Download CV</a>`;
+    modalBody.innerHTML = `<a href="https://api.recruitly.io/api/cloud/${cvid}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA" target="_blank">Download CV</a>`;
     modalElement.classList.add("show");
     modalElement.style.display = "block";
     modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
