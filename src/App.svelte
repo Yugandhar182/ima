@@ -1,31 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { createEventDispatcher } from "svelte";
-
   import "bootstrap/dist/css/bootstrap.min.css";
   import DevExpress from "devextreme";
 
   let jsonData = [];
   let gridData = [];
-  let selectedCandidate = null;
-  let cvHtml = null;
-
-  const dispatch = createEventDispatcher();
-
-  async function openPopup(candidate) {
-    selectedCandidate = candidate;
-    const cvResponse = await fetch(
-      `https://api.recruitly.io/api/candidatecv/${candidate.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
-    );
-    if (cvResponse.ok) {
-      const cvData = await cvResponse.json();
-      cvHtml = cvData.html;
-    } else {
-      cvHtml = null;
-      alert("Failed to fetch CV file.");
-    }
-    dispatch("openPopup");
-  }
 
   onMount(async () => {
     const response = await fetch(
@@ -51,13 +30,28 @@
       {
         caption: "Actions",
         cellTemplate: function (container, options) {
-          const button = document.createElement("button");
-          button.className = "btn btn-primary";
-          button.innerText = "View CV";
-          button.addEventListener("click", () => {
-            openPopup(options.data);
+          const link = document.createElement("a");
+          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          link.target = "_blank";
+          link.innerText = "View CV";
+          link.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const cvResponse = await fetch(link.href);
+            if (cvResponse.ok) {
+              const cvData = await cvResponse.json();
+              const cvHtml = cvData.html;
+              if (cvHtml) {
+                const cvWindow = window.open("", "_blank");
+                cvWindow.document.write(cvHtml);
+                cvWindow.document.close();
+              } else {
+                alert("CV file not found.");
+              }
+            } else {
+              alert("Failed to fetch CV file.");
+            }
           });
-          container.appendChild(button);
+          container.appendChild(link);
         },
         width: 150,
       },
@@ -112,26 +106,3 @@
 <h1 style="color:blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
-
-<!-- Popup -->
-{#if selectedCandidate}
-  <div class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">CV Details</h5>
-      
-            <span aria-hidden="true">&times;</span>
-       
-        </div>
-        <div class="modal-body">
-          {#if cvHtml}
-            <div id="cvContent" innerHTML={cvHtml}></div>
-          {:else}
-            <p>CV file not found.</p>
-          {/if}
-        </div>
-      </div>
-    </div>
-  </div>
-{/if}
