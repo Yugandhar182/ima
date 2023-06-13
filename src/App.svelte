@@ -78,7 +78,7 @@
         },
         popup: {
           showTitle: true,
-          title: "Row in the editing state",
+          title: "Row in the editing ",
         },
         texts: {
           saveRowChanges: "Save",
