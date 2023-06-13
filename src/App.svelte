@@ -5,8 +5,6 @@
 
   let jsonData = [];
   let gridData = [];
-  let isCVModalOpen = false;
-  let selectedCandidateId = null;
 
   onMount(async () => {
     const response = await fetch(
@@ -21,7 +19,6 @@
       surname: item.surname,
       email: item.email,
       mobile: item.mobile,
-      cvid: item.cloudFile.id, // Assuming the CV file ID is accessible via 'item.cloudFile.id'
     }));
 
     const columns = [
@@ -30,100 +27,74 @@
       { dataField: "surname", caption: "Surname", width: 200 },
       { dataField: "email", caption: "Email", width: 200 },
       { dataField: "mobile", caption: "Mobile", width: 150 },
-      // Add the "View CV" button column
       {
         caption: "Actions",
-        width: 100,
         cellTemplate: function (container, options) {
-          const button = document.createElement("button");
-          button.innerText = "View CV";
-          button.className = "btn btn-primary";
-          button.addEventListener("click", function () {
-            // Handle the button click event
-            if (options.data.cvid) {
-              viewCV(options.data.cvid);
+          const link = document.createElement("a");
+          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          link.target = "_blank";
+          link.innerText = "View CV";
+          link.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const cvResponse = await fetch(link.href);
+            if (cvResponse.ok) {
+              const cvData = await cvResponse.json();
+              const cvHtml = cvData.html;
+              if (cvHtml) {
+                const cvWindow = window.open("", "_blank");
+                cvWindow.document.write(cvHtml);
+                cvWindow.document.close();
+              } else {
+                alert("CV file not found.");
+              }
+            } else {
+              alert("Failed to fetch CV file.");
             }
           });
-          container.appendChild(button);
+          container.appendChild(link);
         },
+        width: 150,
       },
-      // Define other columns as needed
+      // Add other columns as needed
     ];
 
-    const dataGrid = new DevExpress.ui.dxDataGrid(document.getElementById("dataGrid"), {
-      dataSource: gridData,
-      columns: columns,
-      showBorders: true,
-      filterRow: {
-        visible: true,
-      },
-      editing: {
-        allowDeleting: true,
-        allowAdding: true,
-        allowUpdating: true,
-        mode: "popup",
-        form: {
-          labelLocation: "top",
+    const dataGrid = new DevExpress.ui.dxDataGrid(
+      document.getElementById("dataGrid"),
+      {
+        dataSource: gridData,
+        columns: columns,
+        showBorders: true,
+        filterRow: {
+          visible: true,
         },
-        popup: {
-          showTitle: true,
-          title: "Row in the editing state",
+        editing: {
+          allowDeleting: true,
+          allowAdding: true,
+          allowUpdating: true,
+          mode: "popup",
+          form: {
+            labelLocation: "top",
+          },
+          popup: {
+            showTitle: true,
+            title: "Row in the editing state",
+          },
+          texts: {
+            saveRowChanges: "Save",
+            cancelRowChanges: "Cancel",
+            deleteRow: "Delete",
+            confirmDeleteMessage:
+              "Are you sure you want to delete this record?",
+          },
         },
-        texts: {
-          saveRowChanges: "Save",
-          cancelRowChanges: "Cancel",
-          deleteRow: "Delete",
-          confirmDeleteMessage: "Are you sure you want to delete this record?",
+        paging: {
+          pageSize: 10,
         },
-      },
-      paging: {
-        pageSize: 10,
-      },
 
-      onInitialized: () => {
-        // Additional initialization logic, if needed
-      },
-    });
-  });
-
-  async function viewCV(candidateCVId) {
-    try {
-      const response = await fetch(
-        `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
-      );
-      if (response.ok) {
-        const cvFile = await response.blob();
-        const url = URL.createObjectURL(cvFile);
-        selectedCandidateId = candidateCVId;
-        isCVModalOpen = true;
-        showModal(url);
-      } else {
-        throw new Error("Failed to fetch CV file");
+        onInitialized: () => {},
       }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function showModal(cvUrl) {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
-    modalElement.classList.add("show");
-    modalElement.style.display = "block";
-    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-  }
-
-  function closeModal() {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = "";
-    modalElement.classList.remove("show");
-    modalElement.style.display = "none";
-    modalElement.style.backgroundColor = "transparent";
-    isCVModalOpen = false;
-    selectedCandidateId = null;
-  }
+    );
+  });
 </script>
 
 <style>
@@ -132,20 +103,6 @@
   }
 </style>
 
-<h1 style="color: blue;">Job Candidate Details</h1>
+<h1 style="color:blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
-
-<div id="cvModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">CV Preview</h5>
-        <button type="button" class="close" aria-label="Close" on:click={closeModal}>
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body"></div>
-    </div>
-  </div>
-</div>
