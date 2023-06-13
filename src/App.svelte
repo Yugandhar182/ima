@@ -38,8 +38,8 @@
               const cvInfoData = await cvInfoResponse.json();
               const cvid = cvInfoData.cvid;
               
-              if (id) {
-                downloadCv(id);
+              if (cvid) {
+                downloadCv(cvid);
               } else {
                 alert("CV file not found.");
               }
@@ -56,7 +56,7 @@
               const cvUrl = URL.createObjectURL(cvBlob);
               const cvLink = document.createElement("a");
               cvLink.href = cvUrl;
-              cvLink.download = file.pdf;
+              cvLink.download = "cv.pdf"; // Replace with the appropriate filename
               cvLink.click();
               URL.revokeObjectURL(cvUrl);
             } else {
