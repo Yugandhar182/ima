@@ -53,20 +53,21 @@
           };
 
           const downloadCv = async (cvid) => {
-            const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvid}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
-            const cvResponse = await fetch(downloadUrl);
-            if (cvResponse.ok) {
-              const cvBlob = await cvResponse.blob();
-              const cvUrl = URL.createObjectURL(cvBlob);
-              const cvLink = document.createElement("a");
-              cvLink.href = cvUrl;
-              cvLink.download = "cv.pdf"; // Replace with the appropriate filename
-              cvLink.click();
-              URL.revokeObjectURL(cvUrl);
-            } else {
-              alert("Failed to fetch CV file.");
-            }
-          };
+  const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvid.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+  const cvResponse = await fetch(downloadUrl);
+  if (cvResponse.ok) {
+    const cvBlob = await cvResponse.blob();
+    const cvUrl = URL.createObjectURL(cvBlob);
+    const cvLink = document.createElement("a");
+    cvLink.href = cvUrl;
+    cvLink.download = "cv.pdf"; // Replace with the appropriate filename
+    cvLink.click();
+    URL.revokeObjectURL(cvUrl);
+  } else {
+    alert("Failed to fetch CV file.");
+  }
+};
+
 
           const downloadButton = document.createElement("button");
           downloadButton.classList.add("btn", "btn-primary");
