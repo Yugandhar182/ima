@@ -86,9 +86,43 @@
     });
   });
 
-  function viewCV(candidateCVId) {
-    const url = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
-    window.open(url, "_blank");
+  async function viewCV(candidateCVId) {
+    try {
+      const response = await fetch(
+        `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
+      );
+      if (response.ok) {
+        const cvFile = await response.blob();
+        const url = URL.createObjectURL(cvFile);
+        selectedCandidateId = candidateCVId;
+        isCVModalOpen = true;
+        showModal(url);
+      } else {
+        throw new Error("Failed to fetch CV file");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function showModal(cvUrl) {
+    const modalElement = document.getElementById("cvModal");
+    const modalBody = modalElement.querySelector(".modal-body");
+    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
+    modalElement.classList.add("show");
+    modalElement.style.display = "block";
+    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+  }
+
+  function closeModal() {
+    const modalElement = document.getElementById("cvModal");
+    const modalBody = modalElement.querySelector(".modal-body");
+    modalBody.innerHTML = "";
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    modalElement.style.backgroundColor = "transparent";
+    isCVModalOpen = false;
+    selectedCandidateId = null;
   }
 </script>
 
@@ -101,3 +135,17 @@
 <h1 style="color: blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
+
+<div id="cvModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CV Preview</h5>
+        <button type="button" class="close" aria-label="Close" on:click={closeModal}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
