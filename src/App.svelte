@@ -21,7 +21,6 @@
       surname: item.surname,
       email: item.email,
       mobile: item.mobile,
-      cvid: item.cloudFile.id, // Assuming the CV file ID is accessible via 'item.cloudFile.id'
     }));
 
     const columns = [
@@ -40,9 +39,7 @@
           button.className = "btn btn-primary";
           button.addEventListener("click", function () {
             // Handle the button click event
-            if (options.data.cvid) {
-              viewCV(options.data.cvid);
-            }
+            viewCV(options.data.id);
           });
           container.appendChild(button);
         },
@@ -86,17 +83,16 @@
     });
   });
 
-  async function viewCV(candidateCVId) {
+  async function viewCV(candidateId) {
     try {
       const response = await fetch(
-        `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
+        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
       );
       if (response.ok) {
-        const cvFile = await response.blob();
-        const url = URL.createObjectURL(cvFile);
-        selectedCandidateId = candidateCVId;
+        const cvData = await response.json();
+        selectedCandidateId = candidateId;
         isCVModalOpen = true;
-        showModal(url);
+        showModal(cvData);
       } else {
         throw new Error("Failed to fetch CV file");
       }
@@ -105,10 +101,10 @@
     }
   }
 
-  function showModal(cvUrl) {
+  function showModal(cvData) {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
+    modalBody.innerText = JSON.stringify(cvData, null, 2);
     modalElement.classList.add("show");
     modalElement.style.display = "block";
     modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
@@ -117,7 +113,7 @@
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
     const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = "";
+    modalBody.innerText = "";
     modalElement.classList.remove("show");
     modalElement.style.display = "none";
     modalElement.style.backgroundColor = "transparent";
@@ -145,7 +141,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body"></div>
+      <pre class="modal-body" style="overflow-x: auto;"></pre>
     </div>
   </div>
 </div>
