@@ -104,13 +104,14 @@
   }
 
   function showModal(cvUrl) {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
-    modalElement.classList.add("show");
-    modalElement.style.display = "block";
-    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-  }
+  const modalElement = document.getElementById("cvModal");
+  const modalBody = modalElement.querySelector(".modal-body");
+  modalBody.innerHTML = `<object data="${cvUrl}" type="application/pdf" width="100%" height="100%"></object>`;
+  modalElement.classList.add("show");
+  modalElement.style.display = "block";
+  modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+}
+
 
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
