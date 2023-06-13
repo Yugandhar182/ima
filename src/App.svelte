@@ -38,8 +38,8 @@
               const cvInfoData = await cvInfoResponse.json();
               const cvid = cvInfoData.cvid;
               
-              if (cvid) {
-                downloadCv(cvid);
+              if (id) {
+                downloadCv(id);
               } else {
                 alert("CV file not found.");
               }
@@ -48,8 +48,8 @@
             }
           };
 
-          const downloadCv = async (cvid) => {
-            const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvid}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+          const downloadCv = async (id) => {
+            const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
             const cvResponse = await fetch(downloadUrl);
             if (cvResponse.ok) {
               const cvBlob = await cvResponse.blob();
