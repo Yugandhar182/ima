@@ -163,10 +163,7 @@
     max-height: 80%;
     overflow-y: auto;
     text-align: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
   }
 
   .cv-popup-close {
