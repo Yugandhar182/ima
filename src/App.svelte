@@ -38,7 +38,7 @@
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", async () => {
+          link.addEventListener("click", async (cvId) => {
             const cvResponse = await fetch(
               `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
             );
