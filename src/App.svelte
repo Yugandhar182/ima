@@ -89,7 +89,17 @@
       `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
     );
     if (response.ok) {
-      const cvBlob = await response.blob();
+      const cvBase64 = await response.text();
+      const cvData = atob(cvBase64); // Decode the base64 string
+
+      // Create a Uint8Array from the decoded data
+      const cvArray = new Uint8Array(cvData.length);
+      for (let i = 0; i < cvData.length; i++) {
+        cvArray[i] = cvData.charCodeAt(i);
+      }
+
+      // Create a Blob from the Uint8Array
+      const cvBlob = new Blob([cvArray], { type: 'application/pdf' });
 
       // Create a URL for the Blob object
       const cvUrl = URL.createObjectURL(cvBlob);
@@ -104,6 +114,7 @@
     console.error(error);
   }
 }
+
 
 
   function showModal(cvUrl) {
