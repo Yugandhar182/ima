@@ -31,7 +31,7 @@
         caption: "Actions",
         cellTemplate: function (container, options) {
           const downloadLink = document.createElement("a");
-          downloadLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          downloadLink.href = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${options.data.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
           downloadLink.target = "_blank";
           downloadLink.download = `CV_${options.data.id}.pdf`;
           downloadLink.innerText = "Download CV";
@@ -53,7 +53,7 @@
           container.appendChild(downloadLink);
 
           const viewLink = document.createElement("a");
-          viewLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          viewLink.href = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${options.data.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
           viewLink.target = "_blank";
           viewLink.innerText = "View CV";
           viewLink.addEventListener("click", async (event) => {
