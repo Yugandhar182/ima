@@ -84,38 +84,33 @@
   });
 
   async function viewCV(candidateId) {
-  try {
-    const response = await fetch(
-      `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
-    );
-    if (response.ok) {
-      const cvData = await response.json();
-      const base64String = cvData.cv; // Assuming the base64 string is available as 'cv' property in the response
-      // Use the base64 string as needed
-      console.log(base64String);
-    } else {
-      throw new Error("Failed to fetch CV file");
+    try {
+      const response = await fetch(
+        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
+      );
+      if (response.ok) {
+        const cvData = await response.json();
+        const base64String = cvData.cv; // Assuming the base64 string is available as 'cv' property in the response
+        // Use the base64 string as needed
+        showModal(base64String);
+      } else {
+        throw new Error("Failed to fetch CV file");
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
+    selectedCandidateId = candidateId;
+    isCVModalOpen = true;
   }
-  selectedCandidateId = candidateId;
-      isCVModalOpen = true;
-      showModal(cvUrl);
-}
 
-
-
-
-  function showModal(cvUrl) {
-  const modalElement = document.getElementById("cvModal");
-  const modalBody = modalElement.querySelector(".modal-body");
-  modalBody.innerHTML = `<object data="${cvUrl}" type="application/pdf" width="100%" height="100%"></object>`;
-  modalElement.classList.add("show");
-  modalElement.style.display = "block";
-  modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-}
-
+  function showModal(base64String) {
+    const modalElement = document.getElementById("cvModal");
+    const modalBody = modalElement.querySelector(".modal-body");
+    modalBody.innerHTML = `<object data="data:application/pdf;base64,${base64String}" type="application/pdf" width="100%" height="100%"></object>`;
+    modalElement.classList.add("show");
+    modalElement.style.display = "block";
+    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+  }
 
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
