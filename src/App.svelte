@@ -3,6 +3,8 @@
   import "bootstrap/dist/css/bootstrap.min.css";
   import DevExpress from "devextreme";
   import jsPDF from "jspdf";
+  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"
+  
 
   let jsonData = [];
   let gridData = [];
