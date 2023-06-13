@@ -53,7 +53,7 @@
           };
 
           const downloadCv = async (cvid) => {
-  const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvid.id}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+  const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=2d969dc4-36d3-47b9-9d40-0351d1ab6f3a&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
   const cvResponse = await fetch(downloadUrl);
   if (cvResponse.ok) {
     const cvBlob = await cvResponse.blob();
