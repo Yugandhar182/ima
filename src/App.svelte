@@ -33,16 +33,22 @@
         width: 100,
         cellTemplate: (container, options) => {
           const link = document.createElement("a");
-          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          link.href = "#";
           link.innerHTML = "Download CV";
-          link.download = "CV.pdf"; // Set the desired filename with the appropriate extension
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", (event) => {
-            event.preventDefault(); // Prevent the default link behavior
-            link.click(); // Programmatically trigger the click event to initiate the download
-            return false; // Prevent the link from being followed
+          link.addEventListener("click", async () => {
+            const cvResponse = await fetch(
+              `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+            );
+            const cvBlob = await cvResponse.blob();
+            const url = window.URL.createObjectURL(cvBlob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "CV.pdf";
+            a.click();
+            window.URL.revokeObjectURL(url);
           });
         },
       },
