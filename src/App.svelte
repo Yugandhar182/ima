@@ -5,8 +5,6 @@
 
   let jsonData = [];
   let gridData = [];
-  let isCVModalOpen = false;
-  let selectedCandidateId = null;
 
   onMount(async () => {
     const response = await fetch(
@@ -21,7 +19,6 @@
       surname: item.surname,
       email: item.email,
       mobile: item.mobile,
-      cvid: item.cloudFile.id, // Assuming the CV file ID is accessible via 'item.cloudFile.id'
     }));
 
     const columns = [
@@ -30,66 +27,68 @@
       { dataField: "surname", caption: "Surname", width: 200 },
       { dataField: "email", caption: "Email", width: 200 },
       { dataField: "mobile", caption: "Mobile", width: 150 },
-      // Add the "View CV" button column
       {
         caption: "Actions",
-        width: 100,
         cellTemplate: function (container, options) {
-          const button = document.createElement("button");
-          button.innerText = "View CV";
-          button.className = "btn btn-primary";
-          button.addEventListener("click", function () {
-            // Handle the button click event
-            if (options.data.cvid) {
-              viewCV(options.data.cvid);
+          const link = document.createElement("a");
+          link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+          link.target = "_blank";
+          link.innerText = "View CV";
+          link.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const cvResponse = await fetch(link.href);
+            if (cvResponse.ok) {
+              const cvBlob = await cvResponse.blob();
+              const cvUrl = URL.createObjectURL(cvBlob);
+              window.open(cvUrl, "_blank");
+            } else {
+              alert("CV file not found.");
             }
           });
-          container.appendChild(button);
+          container.appendChild(link);
         },
+        width: 150,
       },
-      // Define other columns as needed
+      // Add other columns as needed
     ];
 
-    const dataGrid = new DevExpress.ui.dxDataGrid(document.getElementById("dataGrid"), {
-      dataSource: gridData,
-      columns: columns,
-      showBorders: true,
-      filterRow: {
-        visible: true,
-      },
-      editing: {
-        allowDeleting: true,
-        allowAdding: true,
-        allowUpdating: true,
-        mode: "popup",
-        form: {
-          labelLocation: "top",
+    const dataGrid = new DevExpress.ui.dxDataGrid(
+      document.getElementById("dataGrid"),
+      {
+        dataSource: gridData,
+        columns: columns,
+        showBorders: true,
+        filterRow: {
+          visible: true,
         },
-        popup: {
-          showTitle: true,
-          title: "Row in the editing state",
+        editing: {
+          allowDeleting: true,
+          allowAdding: true,
+          allowUpdating: true,
+          mode: "popup",
+          form: {
+            labelLocation: "top",
+          },
+          popup: {
+            showTitle: true,
+            title: "Row in the editing state",
+          },
+          texts: {
+            saveRowChanges: "Save",
+            cancelRowChanges: "Cancel",
+            deleteRow: "Delete",
+            confirmDeleteMessage:
+              "Are you sure you want to delete this record?",
+          },
         },
-        texts: {
-          saveRowChanges: "Save",
-          cancelRowChanges: "Cancel",
-          deleteRow: "Delete",
-          confirmDeleteMessage: "Are you sure you want to delete this record?",
+        paging: {
+          pageSize: 10,
         },
-      },
-      paging: {
-        pageSize: 10,
-      },
 
-      onInitialized: () => {
-        // Additional initialization logic, if needed
-      },
-    });
+        onInitialized: () => {},
+      }
+    );
   });
-
-  function viewCV(candidateCVId) {
-    const url = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
-    window.open(url, "_blank");
-  }
 </script>
 
 <style>
@@ -98,6 +97,6 @@
   }
 </style>
 
-<h1 style="color: blue;">Job Candidate Details</h1>
+<h1 style="color:blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
