@@ -42,18 +42,13 @@
             const cvResponse = await fetch(
               `https://api.recruitly.io/api/cloudfile/download?cloudFileId=2d969dc4-36d3-47b9-9d40-0351d1ab6f3a&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
             );
-           
-
-            
-
-            // Create a temporary link element
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "CV.pdf";
-            link.click();
-
-            // Clean up the temporary link
-            URL.revokeObjectURL(link.href);
+            const cvBlob = await cvResponse.blob();
+            const url = window.URL.createObjectURL(cvBlob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "CV.txt";
+            a.click();
+            window.URL.revokeObjectURL(url);
           });
         },
       },
@@ -77,7 +72,7 @@
         },
         popup: {
           showTitle: true,
-          title: "Row in the editing ",
+          title: "Row in the editing state",
         },
         texts: {
           saveRowChanges: "Save",
@@ -104,4 +99,4 @@
 
 <h1 style="color:blue;">Job Candidate Details</h1>
 
-<div id="dataGrid"></div>
+<div id="dataGrid"></div
