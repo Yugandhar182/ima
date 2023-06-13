@@ -8,7 +8,7 @@
 
   onMount(async () => {
     const response = await fetch(
-      "https://api.recruitly.io/api/candidate?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154"
+      "https://api.recruitly.io/api/candidate?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77"
     );
     const responseData = await response.json();
     jsonData = responseData.data;
@@ -38,15 +38,15 @@
           link.className = "btn btn-primary";
           container.appendChild(link);
 
-          link.addEventListener("click", async () => {
+          link.addEventListener("click", async (cvId) => {
             const cvResponse = await fetch(
-              `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+              `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
             );
             const cvBlob = await cvResponse.blob();
             const url = window.URL.createObjectURL(cvBlob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "CV.docx";
+            a.download = "CV.pdf";
             a.click();
             window.URL.revokeObjectURL(url);
           });
@@ -96,7 +96,4 @@
     height: 400px;
   }
 </style>
-
-<h1 style="color:blue;">Job Candidate Details</h1>
-
 <div id="dataGrid"></div>
