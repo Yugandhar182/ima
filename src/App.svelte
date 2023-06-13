@@ -86,46 +86,31 @@
   async function viewCV(candidateId) {
     try {
       const response = await fetch(
-        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
+        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
       );
       if (response.ok) {
-        const cvData = await response.json();
-        const base64String = cvData.cv; // Assuming the base64 string is available as 'cv' property in the response
-        // Use the base64 string as needed
-        showModal(base64String);
+        const cvFile = await response.blob();
+        // Handle the CV file here
+        const url = URL.createObjectURL(cvFile);
+        selectedCandidateId = candidateId;
+        isCVModalOpen = true;
+        showModal(url);
       } else {
         throw new Error("Failed to fetch CV file");
       }
     } catch (error) {
       console.error(error);
     }
-    selectedCandidateId = candidateId;
-    isCVModalOpen = true;
   }
 
-  function showModal(base64String) {
-  const modalElement = document.getElementById("cvModal");
-  const modalBody = modalElement.querySelector(".modal-body");
-  
-  // Create a data URL from the base64 string
-  const dataURL = `data:application/pdf;base64,${base64String}`;
-  
-  // Create an <object> element with the data URL as the src attribute
-  const objectElement = document.createElement("object");
-  objectElement.setAttribute("data", dataURL);
-  objectElement.setAttribute("type", "application/pdf");
-  objectElement.setAttribute("width", "100%");
-  objectElement.setAttribute("height", "100%");
-  
-  // Append the <object> element to the modal body
-  modalBody.innerHTML = "";
-  modalBody.appendChild(objectElement);
-
-  // Show the modal
-  modalElement.classList.add("show");
-  modalElement.style.display = "block";
-  modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-}
+  function showModal(cvUrl) {
+    const modalElement = document.getElementById("cvModal");
+    const modalBody = modalElement.querySelector(".modal-body");
+    modalBody.innerHTML = `<iframe src="${cvUrl}" width="100%" height="100%"></iframe>`;
+    modalElement.classList.add("show");
+    modalElement.style.display = "block";
+    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+  }
 
   function closeModal() {
     const modalElement = document.getElementById("cvModal");
