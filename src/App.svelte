@@ -8,7 +8,7 @@
 
   onMount(async () => {
     const response = await fetch(
-      "https://api.recruitly.io/api/candidate?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77"
+      "https://api.recruitly.io/api/candidate?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154"
     );
     const responseData = await response.json();
     jsonData = responseData.data;
@@ -27,29 +27,19 @@
       { dataField: "surname", caption: "Surname", width: 200 },
       { dataField: "email", caption: "Email", width: 200 },
       { dataField: "mobile", caption: "Mobile", width: 150 },
-      // Add the file button column
+      // Add the "View CV" button column
       {
         caption: "Actions",
         width: 100,
-        cellTemplate: (container, options) => {
-          const link = document.createElement("a");
-          link.href = "#";
-          link.innerHTML = "Download CV";
-          link.className = "btn btn-primary";
-          container.appendChild(link);
-
-          link.addEventListener("click", async (cvId) => {
-            const cvResponse = await fetch(
-              `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
-            );
-            const cvBlob = await cvResponse.blob();
-            const url = window.URL.createObjectURL(cvBlob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "CV.pdf";
-            a.click();
-            window.URL.revokeObjectURL(url);
+        cellTemplate: function (container, options) {
+          const button = document.createElement("button");
+          button.innerText = "View CV";
+          button.className = "btn btn-primary";
+          button.addEventListener("click", function () {
+            // Handle the button click event
+            viewCV(options.data.id);
           });
+          container.appendChild(button);
         },
       },
       // Define other columns as needed
@@ -84,11 +74,30 @@
       paging: {
         pageSize: 10,
       },
+
       onInitialized: () => {
-        // Any additional initialization code
+        // Additional initialization logic, if needed
       },
     });
   });
+
+  async function viewCV(candidateId) {
+    try {
+      const response = await fetch(
+        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+      );
+      if (response.ok) {
+        const cvFile = await response.blob();
+        // Handle the CV file here
+        const url = URL.createObjectURL(cvFile);
+        window.open(url);
+      } else {
+        throw new Error("Failed to fetch CV file");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 </script>
 
 <style>
@@ -96,4 +105,7 @@
     height: 400px;
   }
 </style>
+
+<h1 style="color:blue;">Job Candidate Details</h1>
+
 <div id="dataGrid"></div>
