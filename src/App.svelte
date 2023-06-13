@@ -96,7 +96,4 @@
     height: 400px;
   }
 </style>
-
-<h1 style="color:blue;">Job Candidate Details</h1>
-
-<div id="dataGrid"></div
+<div id="dataGrid"></div>
