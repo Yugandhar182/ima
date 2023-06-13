@@ -21,6 +21,7 @@
       surname: item.surname,
       email: item.email,
       mobile: item.mobile,
+      cvid: item.cloudFile.id, // Assuming the CV file ID is accessible via 'item.cloudFile.id'
     }));
 
     const columns = [
@@ -39,7 +40,9 @@
           button.className = "btn btn-primary";
           button.addEventListener("click", function () {
             // Handle the button click event
-            viewCV(options.data.id);
+            if (options.data.cvid) {
+              viewCV(options.data.cvid);
+            }
           });
           container.appendChild(button);
         },
@@ -83,42 +86,9 @@
     });
   });
 
-  async function viewCV(candidateId) {
-    try {
-      const response = await fetch(
-        `https://api.recruitly.io/api/candidatecv/${candidateId}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
-      );
-      if (response.ok) {
-        const cvData = await response.json();
-        selectedCandidateId = candidateId;
-        isCVModalOpen = true;
-        showModal(cvData);
-      } else {
-        throw new Error("Failed to fetch CV file");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function showModal(cvData) {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerText = JSON.stringify(cvData, null, 2);
-    modalElement.classList.add("show");
-    modalElement.style.display = "block";
-    modalElement.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-  }
-
-  function closeModal() {
-    const modalElement = document.getElementById("cvModal");
-    const modalBody = modalElement.querySelector(".modal-body");
-    modalBody.innerText = "";
-    modalElement.classList.remove("show");
-    modalElement.style.display = "none";
-    modalElement.style.backgroundColor = "transparent";
-    isCVModalOpen = false;
-    selectedCandidateId = null;
+  function viewCV(candidateCVId) {
+    const url = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${candidateCVId}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
+    window.open(url, "_blank");
   }
 </script>
 
@@ -131,17 +101,3 @@
 <h1 style="color: blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
-
-<div id="cvModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">CV Preview</h5>
-        <button type="button" class="close" aria-label="Close" on:click={closeModal}>
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <pre class="modal-body" style="overflow-x: auto;"></pre>
-    </div>
-  </div>
-</div>
