@@ -5,6 +5,8 @@
 
   let jsonData = [];
   let gridData = [];
+  let cvPopupVisible = false;
+  let cvHtml = "";
 
   onMount(async () => {
     const response = await fetch(
@@ -36,10 +38,10 @@
             );
             if (cvInfoResponse.ok) {
               const cvInfoData = await cvInfoResponse.json();
-              const cvid = cvInfoData.cvid;
-              const file = cvInfoData.file;
-              if (cvid && file) {
-                downloadCv(cvid, file);
+              const cvHtmlData = cvInfoData.html;
+              if (cvHtmlData) {
+                cvHtml = cvHtmlData;
+                cvPopupVisible = true;
               } else {
                 alert("CV file not found.");
               }
@@ -48,31 +50,27 @@
             }
           };
 
-          const downloadCv = async (cvid) => {
-            const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=${cvid}&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
-            const cvResponse = await fetch(downloadUrl);
-            if (cvResponse.ok) {
-              const cvBlob = await cvResponse.blob();
-              const cvUrl = URL.createObjectURL(cvBlob);
-              const cvLink = document.createElement("a");
-              cvLink.href = cvUrl;
-              cvLink.download = file.pdf;
-              cvLink.click();
-              URL.revokeObjectURL(cvUrl);
-            } else {
-              alert("Failed to fetch CV file.");
-            }
+          const downloadCv = async () => {
+            const cvDownloadLink = document.createElement("a");
+            cvDownloadLink.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
+            cvDownloadLink.target = "_blank";
+            cvDownloadLink.click();
           };
 
           const downloadButton = document.createElement("button");
-          downloadButton.classList.add("btn", "btn-primary");
+          downloadButton.classList.add("btn", "btn-primary", "mr-2");
           downloadButton.innerText = "Download CV";
-          downloadButton.addEventListener("click", getCvInfo);
+          downloadButton.addEventListener("click", downloadCv);
           container.appendChild(downloadButton);
+
+          const viewButton = document.createElement("button");
+          viewButton.classList.add("btn", "btn-primary");
+          viewButton.innerText = "View CV";
+          viewButton.addEventListener("click", getCvInfo);
+          container.appendChild(viewButton);
         },
-        width: 150,
+        width: 200,
       },
-      // Add other columns as needed
     ];
 
     const dataGrid = new DevExpress.ui.dxDataGrid(
@@ -122,3 +120,40 @@
 <h1 style="color: blue;">Job Candidate Details</h1>
 
 <div id="dataGrid"></div>
+
+<div
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  style="display: {cvPopupVisible ? 'block' : 'none'}"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CV Information</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          on:click={() => (cvPopupVisible = false)}
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {@html cvHtml}
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          on:click={() => (cvPopupVisible = false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
