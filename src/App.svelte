@@ -38,7 +38,7 @@
               const cvInfoData = await cvInfoResponse.json();
               const cvid = cvInfoData.cvid;
               const file = cvInfoData.file;
-              if (cvid && filename) {
+              if (cvid && file) {
                 downloadCv(cvid, file);
               } else {
                 alert("CV file not found.");
