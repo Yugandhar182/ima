@@ -86,7 +86,7 @@
   async function viewCV(candidateId) {
     try {
       const response = await fetch(
-        `https://api.recruitly.io/api/candidatecv/hire81f9eb3fa87848dca856c0396874259a?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`
+        `https://api.recruitly.io/api/candidatecv/${candidateId }?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
       );
       if (response.ok) {
         const cvFile = await response.blob();
