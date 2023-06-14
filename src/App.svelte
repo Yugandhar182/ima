@@ -1,18 +1,19 @@
+<h1 style="color:blue;">Job Candidate Details</h1> 
 <script>
   import { onMount } from "svelte";
   import "bootstrap/dist/css/bootstrap.min.css";
   import DevExpress from "devextreme";
-
+  
   let jsonData = [];
   let gridData = [];
-
+  
   onMount(async () => {
     const response = await fetch(
       "https://api.recruitly.io/api/candidate?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154"
     );
     const responseData = await response.json();
     jsonData = responseData.data;
-
+  
     gridData = jsonData.map((item) => ({
       id: item.id,
       firstName: item.firstName,
@@ -20,110 +21,130 @@
       email: item.email,
       mobile: item.mobile,
     }));
-
-    const columns = [
-      { dataField: "id", caption: "ID", width: 250 },
-      { dataField: "firstName", caption: "Full Name", width: 200 },
-      { dataField: "surname", caption: "Surname", width: 200 },
-      { dataField: "email", caption: "Email", width: 200 },
-      { dataField: "mobile", caption: "Mobile", width: 150 },
-      {
-        caption: "Actions",
-        cellTemplate: function (container, options) {
-          const getCvInfo = async () => {
-            const cvInfoResponse = await fetch(
-              `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`
-            );
-            if (cvInfoResponse.ok) {
-              const cvInfoData = await cvInfoResponse.json();
-              console.log(cvInfoData); // Log the cvInfoData object to the console
-
-              const cloudFile = cvInfoData.cloudFile;
-              if (cloudFile && cloudFile.id) {
-                const cvid = cloudFile.id;
-                console.log(cvid); // Log the cvid value to the console
-
-                downloadCv(cvid);
-              } else {
-                alert("CV file not found.");
-              }
-            } else {
-              alert("Failed to fetch CV file information.");
-            }
-          };
-
-          const downloadCv = async (cvid) => {
-  const downloadUrl = `https://api.recruitly.io/api/cloudfile/download?cloudFileId=2d969dc4-36d3-47b9-9d40-0351d1ab6f3a&apiKey=TEST45684CB2A93F41FC40869DC739BD4D126D77`;
-  const cvResponse = await fetch(downloadUrl);
-  if (cvResponse.ok) {
-    const cvBlob = await cvResponse.blob();
-    const cvUrl = URL.createObjectURL(cvBlob);
-    const cvLink = document.createElement("a");
-    cvLink.href = cvUrl;
-    cvLink.download = "cv.pdf"; // Replace with the appropriate filename
-    cvLink.click();
-    URL.revokeObjectURL(cvUrl);
-  } else {
-    alert("Failed to fetch CV file.");
-  }
-};
-
-
-          const downloadButton = document.createElement("button");
-          downloadButton.classList.add("btn", "btn-primary");
-          downloadButton.innerText = "Download CV";
-          downloadButton.addEventListener("click", getCvInfo);
-          container.appendChild(downloadButton);
-        },
-        width: 150,
+  
+    const dataGrid = new DevExpress.ui.dxDataGrid(document.getElementById("dataGrid"), {
+      dataSource: gridData,
+      columns: [
+        { dataField: "id", caption: "ID", width: 250 },
+        { dataField: "firstName", caption: "Full Name", width: 200 },
+        { dataField: "surname", caption: "Surname", width: 200 },
+        { dataField: "email", caption: "Email", width: 200 },
+        { dataField: "mobile", caption: "Mobile", width: 150 },
+        // Define other columns as needed
+      ],
+      showBorders: true,
+      filterRow: {
+        visible: true,
       },
-      // Add other columns as needed
-    ];
-
-    const dataGrid = new DevExpress.ui.dxDataGrid(
-      document.getElementById("dataGrid"),
-      {
-        dataSource: gridData,
-        columns: columns,
-        showBorders: true,
-        filterRow: {
-          visible: true,
+      editing: {
+        allowDeleting: true,
+        allowAdding: true,
+        allowUpdating: true,
+        mode: "popup",
+        form: {
+          labelLocation: "top",
         },
-        editing: {
-          allowDeleting: true,
-          allowAdding: true,
-          allowUpdating: true,
-          mode: "popup",
-          form: {
-            labelLocation: "top",
-          },
-          popup: {
-            showTitle: true,
-            title: "Row in the editing state",
-          },
-          texts: {
-            saveRowChanges: "Save",
-            cancelRowChanges: "Cancel",
-            deleteRow: "Delete",
-            confirmDeleteMessage:
-              "Are you sure you want to delete this record?",
-          },
+        popup: {
+          showTitle: true,
+          title: "Row in the editing state",
         },
-        paging: {
-          pageSize: 10,
+        texts: {
+          saveRowChanges: "Save",
+          cancelRowChanges: "Cancel",
+          deleteRow: "Delete",
+          confirmDeleteMessage: "Are you sure you want to delete this record?",
         },
-        onInitialized: () => {},
-      }
-    );
+      },
+      paging: {
+        pageSize: 10,
+      },
+      onRowInserting: async (e) => {
+        console.log("Data being sent to API:", e.data);
+        try {
+          const response = await fetch(
+            "https://api.recruitly.io/api/candidate?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(e.data),
+            }
+          );
+  
+          const responseData = await response.json();
+          if (response.ok) {
+            e.data.firstName = responseData.firstName;
+            gridData.push(e.data);
+            dataGrid.refresh();
+          } else {
+            console.error("Failed to add record:", responseData.error);
+          }
+        } catch (error) {
+          console.error("Failed to add record:", error);
+        }
+      },
+      onRowUpdating: async (e) => {
+        try {
+          console.log(e);
+          var newData = {
+            id: e.key.id,
+            firstName: e.newData.firstName === undefined ? e.oldData.firstName : e.newData.firstName,
+            surname: e.newData.surname === undefined ? e.oldData.surname : e.newData.surname,
+            email: e.newData.email === undefined ? e.oldData.email : e.newData.email,
+            mobile: e.newData.mobile === undefined ? e.oldData.mobile : e.newData.mobile,
+          }
+  
+          console.log(newData)
+          const response = await fetch(
+            `https://api.recruitly.io/api/candidate?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(newData),
+            }
+          );
+          const responseData = await response.json();
+          if (response.ok) {
+            const updatedItemIndex = gridData.findIndex((item) => item.id === e.key);
+            gridData.push(e.newData);
+            gridData[updatedItemIndex] = e.newData;
+            dataGrid.refresh();
+          } else {
+            console.error("Failed to update record:", responseData.error);
+          }
+        } catch (error) {
+          console.error("Failed to update record:", error);
+        }
+      },
+      onRowRemoving: async (e) => {
+        console.log("Data being sent to API:", e.data);
+        try {
+          const response = await fetch(
+            `https://api.recruitly.io/api/candidate/${e.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`,
+            {
+              method: "DELETE",
+            }
+          );
+          if (response.ok) {
+            const removedItemIndex = gridData.findIndex((item) => item.id === e.key);
+            if (removedItemIndex > -1) {
+              gridData.splice(removedItemIndex, 1);
+              dataGrid.refresh();
+            }
+          } else {
+            console.error("Failed to delete record.");
+          }
+        } catch (error) {
+          console.error("Failed to delete record:", error);
+        }
+      },
+      onInitialized: () => {
+  
+      },
+    });
   });
 </script>
-
-<style>
-  #dataGrid {
-    height: 400px;
-  }
-</style>
-
-<h1 style="color: blue;">Job Candidate Details</h1>
-
 <div id="dataGrid"></div>
