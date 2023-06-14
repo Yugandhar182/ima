@@ -32,6 +32,7 @@
       {
         caption: "Actions",
         cellTemplate: function (container, options) {
+          console.log(options.data);
           const link = document.createElement("a");
           link.href = `https://api.recruitly.io/api/candidatecv/${options.data.id}?apiKey=TEST27306FA00E70A0F94569923CD689CA9BE6CA`;
           link.target = "_blank";
