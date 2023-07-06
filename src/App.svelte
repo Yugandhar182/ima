@@ -1,6 +1,6 @@
 <script>
 	import { onMount, afterUpdate } from "svelte";
-  
+	
 	let images = [];
 	let filteredImages = [];
 	let currentPage = 1;
@@ -8,7 +8,6 @@
 	let totalPages = 1;
 	let searchQuery = "";
 	let selectedImage = null;
-
   
 	// Fetch the images when the component is mounted
 	onMount(async () => {
@@ -17,6 +16,7 @@
 		if (response.ok) {
 		  images = await response.json();
 		  filteredImages = images;
+		  console.log(images);
 		  totalPages = Math.ceil(filteredImages.length / pageSize);
 		} else {
 		  console.error("Failed to fetch images:", response.status, response.statusText);
@@ -48,7 +48,7 @@
 	<h1>Image Gallery</h1>
   
 	<div class="search-container">
-	  <input type="text" bind:value={searchQuery} placeholder="Search by author" />
+	  <input type="text" bind:value={searchQuery} placeholder="Search by author" on:input={searchImages} />
 	  <button on:click={searchImages}>Search</button>
 	</div>
   
@@ -57,7 +57,7 @@
 		{#each filteredImages.slice((currentPage - 1) * pageSize, currentPage * pageSize) as image, index}
 		  <div class="grid-item">
 			<img src={image.download_url} alt={image.author} style="width: 200px; height: 150px;" on:click={() => selectedImage = image}>
-
+  
 			<p>{image.author}</p>
 		  </div>
 		{/each}
@@ -74,21 +74,17 @@
 	{:else}
 	  <p>Loading images...</p>
 	{/if}
+  
 	{#if selectedImage}
-	<div class="modal">
-	  <div class="modal-content">
-		<button class="close" on:click={() => selectedImage = null}>Close</button>
-		<img src={selectedImage.download_url} alt={selectedImage.author} style="width: 900px; height: 550px;">
-		<p>{selectedImage.author}</p>
-		
+	  <div class="modal">
+		<div class="modal-content">
+		  <button class="close" on:click={() => selectedImage = null}>Close</button>
+		  <img src={selectedImage.download_url} alt={selectedImage.author} style="width: 900px; height: 550px;">
+		  <p>{selectedImage.author}</p>
+		</div>
 	  </div>
-	</div>
-  {/if}
-  
-  
-
+	{/if}
   </main>
-  
   <style>
 	.grid-container {
 	  display: grid;
