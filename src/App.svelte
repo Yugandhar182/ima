@@ -126,6 +126,7 @@
     align-items: center;
     justify-content: flex-end;
     margin-bottom: 20px;
+    margin-left: -100px;
   }
 
   .search-container input {
