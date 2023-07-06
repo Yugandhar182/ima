@@ -1,157 +1,73 @@
-
-
- 
-
 <script>
+  import { onMount } from "svelte";
+  import { readable } from "svelte/store";
 
-    import { onMount } from "svelte";
+  // Sample data
+  let jsonData = [];
+  let data = [];
 
-    // Sample data
+  const fetchImages = async () => {
+    const response = await fetch("https://picsum.photos/v2/list");
+    const responseData = await response.json();
+    return responseData;
+  };
 
-    let jsonData = [];
+  onMount(async () => {
+    const images = await fetchImages();
+    jsonData = images;
 
-    let data = [];
-
- 
-
-    onMount(async () => {
-
-        const response = await fetch(
-
-            "https://api.recruitly.io/api/candidate?apiKey=TEST9349C0221517DA4942E39B5DF18C68CDA154"
-
-        );
-
-        const responseData = await response.json();
-
-        jsonData = responseData.data;
-
-        console.log(jsonData, "json");
-
-        const gridData = jsonData.map(item => ({
-
-    //   id: item.id,
-
-    reference:item.reference,
-
-      name: item.fullName,
-
-      email:item.email,
-
-      phone:item.mobile,
-
-
-
-
-
-      // map other properties accordingly
-
+    const gridData = jsonData.map((item) => ({
+      id: item.id,
+      reference: item.author,
+      name: item.filename,
+      email: item.post_url,
+      phone: item.download_url,
     }));
 
-console.log(gridData,"griddata");
-
-    // });
-
- 
+    const imageStore = readable(gridData, (set) => {
+      set(gridData);
+    });
 
     var dataGrid = new DevExpress.ui.dxDataGrid("#dataGrid", {
-
-        dataSource: gridData,
-
-        columns: [
-
-        { dataField: 'reference', caption: 'ID' },
-
-        { dataField: 'name', caption: 'Name', dataType: "url" },
-
-        { dataField: 'email', caption: 'Email' },
-
-        { dataField: 'phone', caption: 'Mobile' },
-
-        // Define other columns as needed
-
+      dataSource: {
+        store: imageStore,
+        paginate: true,
+        pageSize: 10,
+      },
+      columns: [
+        { dataField: "id", caption: "ID" },
+        { dataField: "reference", caption: "Author" },
+        { dataField: "name", caption: "Filename" },
+        { dataField: "email", caption: "Post URL" },
+        { dataField: "phone", caption: "Download URL" },
       ],
-
- 
-
-        
-
-        showBorders: true,
-
-        filterRow: {
-
-            visible: true,
-
+      showBorders: true,
+      filterRow: {
+        visible: true,
+      },
+      editing: {
+        allowDeleting: true,
+        allowAdding: true,
+        allowUpdating: true,
+        mode: "popup",
+        form: {
+          labelLocation: "top",
         },
-
-        // editing: {
-
-            
-
-        //  allowUpdating: true,
-
-        //  allowDeleting: true,
-
-        //  allowAdding: true,
-
-        // },
-
-
-
-
-
-        editing: {
-
-            allowDeleting: true,
-
-            allowAdding: true,
-
-            allowUpdating: true,
-
-            mode: "popup",
-
-            form: {
-
-                labelLocation: "top"
-
-            },
-
-            popup: {
-
-                showTitle: true,
-
-                title: "Row in the editing state"
-
-            }
-
+        popup: {
+          showTitle: true,
+          title: "Row in the editing state",
         },
-
-        paging: {
-
-            pageSize: 10,
-
-        },
-
-        // pagination:true,
-
-        pager: {
-
-            showPageSizeSelector: true,
-
-            allowedPageSizes: [5, 10, 20],
-
-            showInfo: true,
-
-        },
-
+      },
+      paging: {
+        pageSize: 10,
+      },
+      pager: {
+        showPageSizeSelector: true,
+        allowedPageSizes: [5, 10, 20],
+        showInfo: true,
+      },
     });
-
-    });
-
-    // dataGrid.render();
-
-    // });
-
+  });
 </script>
 
 <div id="dataGrid"></div>
