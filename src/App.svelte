@@ -1,73 +1,141 @@
 <script>
-  import { onMount } from "svelte";
-  import { readable } from "svelte/store";
-
-  // Sample data
-  let jsonData = [];
-  let data = [];
-
-  const fetchImages = async () => {
-    const response = await fetch("https://picsum.photos/v2/list");
-    const responseData = await response.json();
-    return responseData;
-  };
-
-  onMount(async () => {
-    const images = await fetchImages();
-    jsonData = images;
-
-    const gridData = jsonData.map((item) => ({
-      id: item.id,
-      reference: item.author,
-      name: item.filename,
-      email: item.post_url,
-      phone: item.download_url,
-    }));
-
-    const imageStore = readable(gridData, (set) => {
-      set(gridData);
-    });
-
-    var dataGrid = new DevExpress.ui.dxDataGrid("#dataGrid", {
-      dataSource: {
-        store: imageStore,
-        paginate: true,
-        pageSize: 10,
-      },
-      columns: [
-        { dataField: "id", caption: "ID" },
-        { dataField: "reference", caption: "Author" },
-        { dataField: "name", caption: "Filename" },
-        { dataField: "email", caption: "Post URL" },
-        { dataField: "phone", caption: "Download URL" },
-      ],
-      showBorders: true,
-      filterRow: {
-        visible: true,
-      },
-      editing: {
-        allowDeleting: true,
-        allowAdding: true,
-        allowUpdating: true,
-        mode: "popup",
-        form: {
-          labelLocation: "top",
-        },
-        popup: {
-          showTitle: true,
-          title: "Row in the editing state",
-        },
-      },
-      paging: {
-        pageSize: 10,
-      },
-      pager: {
-        showPageSizeSelector: true,
-        allowedPageSizes: [5, 10, 20],
-        showInfo: true,
-      },
-    });
-  });
-</script>
-
-<div id="dataGrid"></div>
+	import { onMount, afterUpdate } from "svelte";
+  
+	let images = [];
+	let filteredImages = [];
+	let currentPage = 1;
+	let pageSize = 9;
+	let totalPages = 1;
+	let searchQuery = "";
+  
+	// Fetch the images when the component is mounted
+	onMount(async () => {
+	  try {
+		const response = await fetch("https://picsum.photos/v2/list");
+		if (response.ok) {
+		  images = await response.json();
+		  filteredImages = images;
+		  totalPages = Math.ceil(filteredImages.length / pageSize);
+		} else {
+		  console.error("Failed to fetch images:", response.status, response.statusText);
+		}
+	  } catch (error) {
+		console.error("Error fetching images:", error);
+	  }
+	});
+  
+	// Update the totalPages whenever the images or pageSize change
+	afterUpdate(() => {
+	  totalPages = Math.ceil(filteredImages.length / pageSize);
+	});
+  
+	function goToPage(page) {
+	  currentPage = page;
+	}
+  
+	function searchImages() {
+	  filteredImages = images.filter((image) =>
+		image.author.toLowerCase().includes(searchQuery.toLowerCase())
+	  );
+	  currentPage = 1;
+	  totalPages = Math.ceil(filteredImages.length / pageSize);
+	}
+  </script>
+  
+  <main>
+	
+  
+	<div class="search-container">
+	  <input type="text" bind:value={searchQuery} placeholder="Search by author" />
+	  <button on:click={searchImages}>Search</button>
+	</div>
+  
+	{#if images.length > 0}
+	  <div class="grid-container">
+		{#each filteredImages.slice((currentPage - 1) * pageSize, currentPage * pageSize) as image, index}
+		  <div class="grid-item">
+			<img src={image.download_url} alt={image.author} style="width: 200px; height: 150px;">
+			<p>{image.author}</p>
+		  </div>
+		{/each}
+	  </div>
+	  <nav aria-label="Pagination">
+		<ul class="pagination">
+		  {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
+			<li class="page-item {currentPage === page ? 'active' : ''}">
+			  <button class="page-link" on:click={() => goToPage(page)}>{page}</button>
+			</li>
+		  {/each}
+		</ul>
+	  </nav>
+	{:else}
+	  <p>Loading images...</p>
+	{/if}
+  </main>
+  
+  <style>
+	.grid-container {
+	  display: grid;
+	  grid-template-columns: repeat(3, 1fr);
+	  gap: 20px;
+	  width: 250px;
+	}
+  
+	.grid-item {
+	  text-align: center;
+	  border: 1px solid #ddd;
+	  padding: 10px;
+	  border-radius: 4px;
+	}
+  
+	.pagination {
+	  display: flex;
+	  justify-content: center;
+	  margin-top: 20px;
+	}
+  
+	.pagination .page-item {
+	  list-style: none;
+	  margin-right: 5px;
+	}
+  
+	.pagination .page-item .page-link {
+	  padding: 5px 10px;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+  
+	.pagination .page-item .page-link:focus,
+	.pagination .page-item .page-link:hover {
+	  background-color: #f2f2f2;
+	}
+  
+	.pagination .page-item.active .page-link {
+	  background-color: #007bff;
+	  color: #fff;
+	  border-color: #007bff;
+	}
+  
+	.search-container {
+	  display: flex;
+	  align-items: center;
+	  justify-content: flex-end;
+	  margin-bottom: 20px;
+	}
+  
+	.search-container input {
+	  padding: 5px;
+	  margin-right: 10px;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+	}
+  
+	.search-container button {
+	  padding: 5px 10px;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+  </style>
+  
