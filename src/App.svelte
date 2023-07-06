@@ -1,6 +1,6 @@
 <script>
 	import { onMount, afterUpdate } from "svelte";
-	
+  import 'bootstrap/dist/css/bootstrap.min.css';
 	let images = [];
 	let filteredImages = [];
 	let currentPage = 1;
@@ -62,7 +62,7 @@
   </script>
   
   <main>
-	<h1>Image Gallery</h1>
+	<h1 style="color: crimson;">Image Gallery</h1>
   
 
 	<div class="search-upload-container">
@@ -77,7 +77,7 @@
 		</div>
 	
 		<div class="upload-container">
-		  <button class="upload-button" on:click={openUploadPopup}>
+		  <button  style="background-color: yellow;" class="upload-button" on:click={openUploadPopup}>
 			Upload Images
 		  </button>
 		</div>
@@ -285,15 +285,13 @@
 
 .upload-popup button {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #7f25e0;
+  color: #5c2d96;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.upload-popup button:hover {
-  background-color: #0056b3;
-}
+
   </style>
   
