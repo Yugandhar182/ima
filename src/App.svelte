@@ -40,14 +40,14 @@
 	  currentPage = 1;
 	  totalPages = Math.ceil(filteredImages.length / pageSize);
 	}
-</script>
+  </script>
   
-<main>
+  <main>
+	<h1>Image Gallery</h1>
+  
 	<div class="search-container">
-	  <div class="search-box">
-	    <input type="text" bind:value={searchQuery} placeholder="Search by author" />
-	    <button on:click={searchImages}>Search</button>
-	  </div>
+	  <input type="text" bind:value={searchQuery} placeholder="Search by author" />
+	  <button on:click={searchImages}>Search</button>
 	</div>
   
 	{#if images.length > 0}
@@ -71,14 +71,13 @@
 	{:else}
 	  <p>Loading images...</p>
 	{/if}
-</main>
+  </main>
   
-<style>
+  <style>
 	.grid-container {
 	  display: grid;
 	  grid-template-columns: repeat(3, 1fr);
 	  gap: 20px;
-	  width: 250px;
 	}
   
 	.grid-item {
@@ -120,14 +119,8 @@
 	.search-container {
 	  display: flex;
 	  align-items: center;
-	  justify-content: flex-start; /* Updated alignment */
+	  justify-content: flex-end;
 	  margin-bottom: 20px;
-	  margin-left: 20px; /* Added margin to position search container */
-	}
-  
-	.search-container .search-box {
-	  display: flex;
-	  align-items: center;
 	}
   
 	.search-container input {
@@ -143,4 +136,5 @@
 	  border-radius: 4px;
 	  cursor: pointer;
 	}
-</style>
+  </style>
+  
