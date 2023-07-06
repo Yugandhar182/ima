@@ -7,6 +7,8 @@
 	let pageSize = 9;
 	let totalPages = 1;
 	let searchQuery = "";
+	let selectedImage = null;
+
   
 	// Fetch the images when the component is mounted
 	onMount(async () => {
@@ -54,7 +56,8 @@
 	  <div class="grid-container">
 		{#each filteredImages.slice((currentPage - 1) * pageSize, currentPage * pageSize) as image, index}
 		  <div class="grid-item">
-			<img src={image.download_url} alt={image.author} style="width: 200px; height: 150px;">
+			<img src={image.download_url} alt={image.author} style="width: 200px; height: 150px;" on:click={() => selectedImage = image}>
+
 			<p>{image.author}</p>
 		  </div>
 		{/each}
@@ -71,6 +74,19 @@
 	{:else}
 	  <p>Loading images...</p>
 	{/if}
+	{#if selectedImage}
+	<div class="modal">
+	  <div class="modal-content">
+		<button class="close" on:click={() => selectedImage = null}>Close</button>
+		<img src={selectedImage.download_url} alt={selectedImage.author} style="width: 900px; height: 550px;">
+		<p>{selectedImage.author}</p>
+		
+	  </div>
+	</div>
+  {/if}
+  
+  
+
   </main>
   
   <style>
@@ -136,5 +152,58 @@
 	  border-radius: 4px;
 	  cursor: pointer;
 	}
+	
+	.modal {
+    display: block;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+	background-color: hsl(0, 12%, 7%);
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: auto;
+    margin-top: 10%;
+    width: 80%;
+	
+    max-width: 800px;
+  
+    padding: 20px;
+    border-radius: 4px;
+  }
+
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ea1e40;
+    cursor: pointer;
+  }
+
+  .close:hover {
+    color: #000;
+  }
+ 
+  
+
+  .close-button {
+    margin-top: 5px;
+    padding: 4px 10px;
+    border: 1px solid #dd0909;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+
   </style>
   
