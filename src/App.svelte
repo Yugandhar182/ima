@@ -239,7 +239,7 @@ $: filteredImages = images.filter((image) =>
     margin: auto;
     margin-top: 10%;
     width: 80%;
-	
+	background-color: hsl(0, 12%, 7%);
     max-width: 800px;
   
     padding: 20px;
