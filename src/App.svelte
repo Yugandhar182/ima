@@ -1,6 +1,6 @@
 <script>
 	import { onMount, afterUpdate } from "svelte";
-  import 'bootstrap/dist/css/bootstrap.min.css';
+	import 'bootstrap/dist/css/bootstrap.min.css';
 	let images = [];
 	let filteredImages = [];
 	let currentPage = 1;
@@ -285,7 +285,7 @@
 
 .upload-popup button {
   padding: 10px 20px;
-  background-color: #7f25e0;
+  background-color: #e8e1ee;
   color: #5c2d96;
   border: none;
   border-radius: 4px;
