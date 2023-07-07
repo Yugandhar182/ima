@@ -10,6 +10,7 @@
 	let selectedImage = null;
 	let selectedFile = null; 
 	let isUploadPopupOpen = false;
+	let sortAsc = true;
   
 	// Fetch the images when the component is mounted
 	onMount(async () => {
@@ -59,6 +60,22 @@
       closeUploadPopup();
     }
   }
+  function sortData() {
+  if (sortAsc) {
+    filteredImages = images.sort((a, b) => a.author.localeCompare(b.author));
+  } else {
+    filteredImages = images.sort((a, b) => b.author.localeCompare(a.author));
+  }
+}
+
+function toggleSortOrder() {
+  sortAsc = !sortAsc;
+  sortData();
+}
+$: filteredImages = images.filter((image) =>
+  image.author.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   </script>
   
   <main>
@@ -75,7 +92,9 @@
 		  />
 		  <button on:click={searchImages}>Search</button>
 		</div>
-	
+		<button class="btn btn-primary" on:click={toggleSortOrder}>
+			Sort
+		  </button>
 		<div class="upload-container">
 		  <button  style="background-color: yellow;" class="upload-button" on:click={openUploadPopup}>
 			Upload Images
