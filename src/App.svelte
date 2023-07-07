@@ -92,10 +92,12 @@ $: filteredImages = images.filter((image) =>
 		  />
 		  <button on:click={searchImages}>Search</button>
 		</div>
-		<button class="btn btn-primary" on:click={toggleSortOrder}>
-			Sort
-		  </button>
+		
 		<div class="upload-container">
+			<button class="btn btn-primary" on:click={toggleSortOrder}>
+				Sort
+			  </button>
+			  <span class="spacer"></span>
 		  <button  style="background-color: yellow;" class="upload-button" on:click={openUploadPopup}>
 			Upload Images
 		  </button>
@@ -151,6 +153,9 @@ $: filteredImages = images.filter((image) =>
 	{/if}
   </main>
   <style>
+	  .spacer {
+  margin: 0 10px;
+}
 	.grid-container {
 	  display: grid;
 	  grid-template-columns: repeat(3, 1fr);
