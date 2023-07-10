@@ -164,7 +164,7 @@
 
 <style>
    .spacer {
-  margin: 0 40px;
+  margin: 0 70px;
 }
 	.grid-container {
 	  display: grid;
