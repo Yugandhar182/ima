@@ -12,6 +12,8 @@
   let filterHeightAsc = true;
   let filterWidthAsc = true;
   let filterOption = "";
+  let selectedFile = null; 
+	let isUploadPopupOpen = false;
 
   // Fetch the images when the component is mounted
   onMount(async () => {
@@ -92,6 +94,22 @@
   $: filteredImages = images.filter((image) =>
     image.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  function openUploadPopup() {
+    isUploadPopupOpen = true;
+  }
+
+  function closeUploadPopup() {
+    isUploadPopupOpen = false;
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      selectedFile = URL.createObjectURL(file); // Store the selected file path
+      closeUploadPopup();
+    }
+  }
 </script>
 
 <main>
@@ -113,8 +131,12 @@
         Sort
       </button>
       <span class="spacer"></span>
-	   <button on:click={applyFilter}>Filter</button>
+      <button on:click={applyFilter}>Filter</button>
       <div class="filter-container">
+        <span class="spacer"></span>
+        <button  style="background-color: yellow;" class="upload-button" on:click={openUploadPopup}>
+          Upload Images
+          </button>
         <select bind:value={filterOption}>
           <option value="">No Filter</option>
           <option value="ascHeight">Asc Height</option>
@@ -126,6 +148,20 @@
       </div>
     </div>
   </div>
+  {#if isUploadPopupOpen}
+  <div class="upload-popup">
+  <div class="upload-popup-content">
+    <h2>Select Image File</h2>
+    <input
+    type="file"
+    id="file-input"
+    accept="image/*"
+    on:change={handleFileChange}
+    />
+    <button on:click={closeUploadPopup}>Cancel</button>
+  </div>
+  </div>
+  {/if}
 
   
 
@@ -164,7 +200,7 @@
 
 <style>
    .spacer {
-  margin: 0 70px;
+  margin: 0 40px;
 }
 	.grid-container {
 	  display: grid;
@@ -305,7 +341,47 @@
   .filter-container button {
     padding: 5px 10px;
     border: 1px solid #ddd;
+    background-color: hsl(251, 84%, 49%);
     border-radius: 4px;
     cursor: pointer;
   }
+  
+.upload-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.upload-popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.upload-popup h2 {
+  margin-bottom: 10px;
+}
+
+.upload-popup input[type="file"] {
+  margin-bottom: 20px;
+}
+
+.upload-popup button {
+  padding: 10px 20px;
+  background-color: #e8e1ee;
+  color: #5c2d96;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 </style>
