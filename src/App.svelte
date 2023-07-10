@@ -113,6 +113,7 @@
         Sort
       </button>
       <span class="spacer"></span>
+	   <button on:click={applyFilter}>Filter</button>
       <div class="filter-container">
         <select bind:value={filterOption}>
           <option value="">No Filter</option>
@@ -121,7 +122,7 @@
           <option value="ascWidth">Asc Width</option>
           <option value="descWidth">Desc Width</option>
         </select>
-        <button on:click={applyFilter}>Filter</button>
+       
       </div>
     </div>
   </div>
@@ -163,7 +164,7 @@
 
 <style>
    .spacer {
-  margin: 0 10px;
+  margin: 0 40px;
 }
 	.grid-container {
 	  display: grid;
