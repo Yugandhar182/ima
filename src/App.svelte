@@ -25,7 +25,7 @@
         },
         (error, result) => {
           if (!error && result && result.event === 'success') {
-            console.log('Done! Here is the image info: ', result.info);
+            console.log('Image uploaded successfully: ', result.info);
             fetchImages();
           }
         }
@@ -96,5 +96,5 @@
 </div>
 
 <button id="upload_widget" class="cloudinary-button" on:click={openWidget}>
-  Upload files
+  Upload images
 </button>
