@@ -4,10 +4,10 @@
 
   let myWidget;
   let images = [];
-  let filteredImages = [];
-  let searchInput = '';
   let currentPage = 1;
   const itemsPerPage = 9;
+  let filteredImages = [];
+  let searchText = '';
 
   const CLOUDINARY_CLOUD_NAME = 'dv6i5lgia';
   const CLOUDINARY_API_KEY = '548841973896839';
@@ -52,27 +52,24 @@
 
     const data = await response.json();
     images = data.resources;
-    filterImages();
-  }
-
-  function filterImages() {
-    if (searchInput === '') {
-      filteredImages = images;
-    } else {
-      filteredImages = images.filter(image => image.public_id.startsWith(searchInput));
-    }
-
     paginateImages();
   }
 
   function paginateImages() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = currentPage * itemsPerPage;
-    filteredImages = images.slice(startIndex, endIndex);
+    const paginatedImages = searchText ? filteredImages : images;
+    filteredImages = paginatedImages.slice(startIndex, endIndex);
   }
 
   function goToPage(pageNumber) {
     currentPage = pageNumber;
+    paginateImages();
+  }
+
+  function searchImages() {
+    filteredImages = images.filter(image => image.public_id.includes(searchText));
+    currentPage = 1;
     paginateImages();
   }
 
@@ -96,8 +93,9 @@
   .image-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-   grid-gap: 10px;
-    margin-top: 80px;
+    grid-gap: 10px;
+   
+	   margin-top: 80px;
     margin-bottom: 20px; 
   }
 
@@ -123,16 +121,6 @@
     font-size: 14px;
   }
 
-  .search-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-
-  .search-input {
-    padding: 5px;
-  }
-
   .pagination {
     display: flex;
     justify-content: center;
@@ -153,8 +141,9 @@
   }
 </style>
 
-<div class="search-container">
-  <input type="text" class="search-input" bind:value={searchInput} placeholder="Search by name" on:input={filterImages} />
+<div>
+  <input type="text" bind:value={searchText} placeholder="Search by Public ID" />
+  <button on:click={searchImages}>Search</button>
 </div>
 
 <div class="image-container">
