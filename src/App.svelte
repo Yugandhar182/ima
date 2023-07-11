@@ -8,6 +8,7 @@
   const itemsPerPage = 9;
   let filteredImages = [];
   let searchText = '';
+  let searchTimeout;
 
   const CLOUDINARY_CLOUD_NAME = 'dv6i5lgia';
   const CLOUDINARY_API_KEY = '548841973896839';
@@ -15,6 +16,17 @@
 
   function openWidget() {
     myWidget.open();
+  }
+
+  function handleSearchInput() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(searchImages, 500); // Delayed search execution
+  }
+
+  function searchImages() {
+    filteredImages = images.filter(image => image.public_id.includes(searchText));
+    currentPage = 1;
+    paginateImages();
   }
 
   onMount(() => {
@@ -67,14 +79,40 @@
     paginateImages();
   }
 
-  function searchImages() {
-    filteredImages = images.filter(image => image.public_id.includes(searchText));
-    currentPage = 1;
-    paginateImages();
-  }
-
   fetchImages();
 </script>
+
+
+
+<div>
+  <input type="text" bind:value={searchText} placeholder="Search by Name" on:input={handleSearchInput} />
+  <button on:click={searchImages}>Search</button>
+</div>
+
+<div class="image-container">
+  {#each filteredImages as image}
+  <div class="image-item">
+    <img src={image.url} alt={image.public_id}  style="width: 400px; height: 200px;"/>
+    <div class="image-name">{image.public_id}</div>
+  </div>
+  {/each}
+</div>
+
+<div class="pagination">
+  {#each Array.from({ length: Math.ceil(images.length / itemsPerPage) }) as _, index}
+  <div
+    class="pagination-item {index + 1 === currentPage ? 'active' : ''}"
+    on:click={() => goToPage(index + 1)}
+  >
+    {index + 1}
+  </div>
+  {/each}
+</div>
+
+<button id="upload_widget" class="cloudinary-button" on:click={openWidget}>
+  Upload files
+</button>
+
 
 <style>
   .cloudinary-button {
@@ -94,8 +132,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
-   
-	   margin-top: 80px;
+   margin-top: 80px;
     margin-bottom: 20px; 
   }
 
@@ -140,32 +177,3 @@
     color: #fff;
   }
 </style>
-
-<div>
-  <input type="text" bind:value={searchText} placeholder="Search by Public ID" />
-  <button on:click={searchImages}>Search</button>
-</div>
-
-<div class="image-container">
-  {#each filteredImages as image}
-  <div class="image-item">
-    <img src={image.url} alt={image.public_id} style="width: 400px; height: 200px;" />
-    <div class="image-name">{image.public_id}</div>
-  </div>
-  {/each}
-</div>
-
-<div class="pagination">
-  {#each Array.from({ length: Math.ceil(images.length / itemsPerPage) }) as _, index}
-  <div
-    class="pagination-item {index + 1 === currentPage ? 'active' : ''}"
-    on:click={() => goToPage(index + 1)}
-  >
-    {index + 1}
-  </div>
-  {/each}
-</div>
-
-<button id="upload_widget" class="cloudinary-button" on:click={openWidget}>
-  Upload files
-</button>
