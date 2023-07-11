@@ -159,7 +159,7 @@
 <div class="image-container">
   {#each filteredImages as image}
   <div class="image-item">
-    <img src={image.url} alt={image.public_id} />
+    <img src={image.url} alt={image.public_id} style="width: 200px; height: 150px;" />
     <div class="image-name">{image.public_id}</div>
   </div>
   {/each}
