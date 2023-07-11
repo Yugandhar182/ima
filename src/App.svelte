@@ -139,6 +139,8 @@
   <button class="btn btn-primary" on:click={toggleSortOrder}>
     Sort
   </button>
+   <span class="spacer"></span>
+  
   <div class="filter-container">
         <select bind:value={filterOption}>
           <option value="">No Filter</option>
@@ -284,21 +286,28 @@
      .spacer {
   margin: 0 50px;
 }
+
   .filter-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     margin-bottom: 20px;
+	margin-left: 40px;
   }
 
   .filter-container select {
     margin-right: 10px;
+	margin-left: 40px;
+		margin-top: -40px;
   }
 
   .filter-container button {
     padding: 5px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #5b69eb;
     border-radius: 4px;
     cursor: pointer;
+	margin-top: -40px;
+	margin-right: 200px;
+	background-color: hsl(329, 82%, 45%);
   }
 </style>
