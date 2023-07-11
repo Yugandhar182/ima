@@ -284,4 +284,21 @@
      .spacer {
   margin: 0 50px;
 }
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .filter-container select {
+    margin-right: 10px;
+  }
+
+  .filter-container button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 </style>
