@@ -9,6 +9,8 @@
   let filteredImages = [];
   let searchText = '';
   let searchTimeout;
+  let selectedImage = null;
+
 
   const CLOUDINARY_CLOUD_NAME = 'dv6i5lgia';
   const CLOUDINARY_API_KEY = '548841973896839';
@@ -23,12 +25,11 @@
     searchTimeout = setTimeout(searchImages, 500); // Delayed search execution
   }
 
-  function searchImages() {
+   function searchImages() {
     filteredImages = images.filter(image => image.public_id.startsWith(searchText));
     currentPage = 1;
     paginateImages();
   }
-
   onMount(() => {
     const script = document.createElement('script');
     script.src = 'https://upload-widget.cloudinary.com/global/all.js';
@@ -92,7 +93,7 @@
 <div class="image-container">
   {#each filteredImages as image}
   <div class="image-item">
-    <img src={image.url} alt={image.public_id}  style="width: 400px; height: 200px;"/>
+    <img src={image.url} alt={image.public_id}  style="width: 400px; height: 200px;" on:click={() => selectedImage = image}/>
     <div class="image-name">{image.public_id}</div>
   </div>
   {/each}
@@ -110,9 +111,18 @@
 </div>
 
 <button id="upload_widget" class="cloudinary-button" on:click={openWidget}>
-  Upload files
+  Upload images
 </button>
 
+	{#if selectedImage}
+<div class="modal">
+  <div class="modal-content">
+    <button class="close" on:click={() => selectedImage = null}>Close</button>
+    <img src={selectedImage.url} alt={selectedImage.public_id} style="width: 900px; height: 550px;" />
+   
+  </div>
+</div>
+{/if}
 
 <style>
   .cloudinary-button {
@@ -132,7 +142,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
-   margin-top: 80px;
+   margin-top: 50px;
     margin-bottom: 20px; 
   }
 
@@ -175,5 +185,42 @@
   .pagination-item.active {
     background-color: #4caf50;
     color: #fff;
+  }
+  	.modal {
+    display: block;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+	background-color: hsl(0, 12%, 7%);
+	
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: auto;
+    margin-top: 10%;
+    width: 80%;
+	 margin-top: 80px;
+    max-width: 800px;
+  background-color: hsl(0, 12%, 7%);
+    padding: 20px;
+    border-radius: 4px;
+  }
+
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ea1e40;
+    cursor: pointer;
   }
 </style>
