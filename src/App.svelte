@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount , afterUpdate } from 'svelte';
   import 'bootstrap/dist/css/bootstrap.min.css';
 
   let myWidget;
@@ -11,6 +11,9 @@
   let searchTimeout;
   let selectedImage = null;
   let sortAsc = true;
+   let filterHeightAsc = true;
+  let filterWidthAsc = true;
+  let filterOption = "";
 
   const CLOUDINARY_CLOUD_NAME = 'dv6i5lgia';
   const CLOUDINARY_API_KEY = '548841973896839';
@@ -66,6 +69,7 @@
 
     const data = await response.json();
     images = data.resources;
+	
     paginateImages();
   }
 
@@ -98,6 +102,34 @@
     sortAsc = !sortAsc;
     sortData();
   }
+
+
+   
+    function filterByHeight() {
+    filterOption = filterHeightAsc ? "ascHeight" : "descHeight";
+    filterHeightAsc = !filterHeightAsc;
+  }
+
+  function filterByWidth() {
+    filterOption = filterWidthAsc ? "ascWidth" : "descWidth";
+    filterWidthAsc = !filterWidthAsc;
+  }
+
+  function applyFilter() {
+    if (filterOption === "ascHeight") {
+      filteredImages = images.slice().sort((a, b) => a.height - b.height);
+    } else if (filterOption === "descHeight") {
+      filteredImages = images.slice().sort((a, b) => b.height - a.height);
+    } else if (filterOption === "ascWidth") {
+      filteredImages = images.slice().sort((a, b) => a.width - b.width);
+    } else if (filterOption === "descWidth") {
+      filteredImages = images.slice().sort((a, b) => b.width - a.width);
+    } else {
+      // No filter option selected, display all images
+      filteredImages = images;
+    }
+	
+  }
 </script>
 
 <div>
@@ -107,7 +139,18 @@
   <button class="btn btn-primary" on:click={toggleSortOrder}>
     Sort
   </button>
-</div>
+  <div class="filter-container">
+        <select bind:value={filterOption}>
+          <option value="">No Filter</option>
+          <option value="ascHeight">Asc Height</option>
+          <option value="descHeight">Desc Height</option>
+          <option value="ascWidth">Asc Width</option>
+          <option value="descWidth">Desc Width</option>
+        </select>
+        <button on:click={applyFilter}>Filter</button>
+      </div>
+    </div>
+
 
 <div class="image-container">
   {#each filteredImages as image}
