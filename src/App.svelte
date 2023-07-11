@@ -96,8 +96,9 @@
   .image-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-    margin-top: 20px;
+   grid-gap: 10px;
+    margin-top: 100px;
+    margin-bottom: 20px; 
   }
 
   .image-item {
