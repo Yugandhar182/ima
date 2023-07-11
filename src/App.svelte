@@ -24,7 +24,7 @@
   }
 
   function searchImages() {
-    filteredImages = images.filter(image => image.public_id.includes(searchText));
+    filteredImages = images.filter(image => image.public_id.startsWith(searchText));
     currentPage = 1;
     paginateImages();
   }
