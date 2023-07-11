@@ -97,7 +97,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
    grid-gap: 10px;
-    margin-top: 100px;
+    margin-top: 80px;
     margin-bottom: 20px; 
   }
 
