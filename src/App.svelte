@@ -307,7 +307,7 @@
     border-radius: 4px;
     cursor: pointer;
 	margin-top: -40px;
-	margin-right: 200px;
-	background-color: hsl(329, 82%, 45%);
+	margin-right: 700px;
+	background-color: hsl(329, 82%, 74%);
   }
 </style>
