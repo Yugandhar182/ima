@@ -10,7 +10,7 @@
   let searchText = '';
   let searchTimeout;
   let selectedImage = null;
-
+  let sortAsc = true;
 
   const CLOUDINARY_CLOUD_NAME = 'dv6i5lgia';
   const CLOUDINARY_API_KEY = '548841973896839';
@@ -25,11 +25,12 @@
     searchTimeout = setTimeout(searchImages, 500); // Delayed search execution
   }
 
-   function searchImages() {
+  function searchImages() {
     filteredImages = images.filter(image => image.public_id.startsWith(searchText));
     currentPage = 1;
     paginateImages();
   }
+
   onMount(() => {
     const script = document.createElement('script');
     script.src = 'https://upload-widget.cloudinary.com/global/all.js';
@@ -69,10 +70,12 @@
   }
 
   function paginateImages() {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = currentPage * itemsPerPage;
-    const paginatedImages = searchText ? filteredImages : images;
-    filteredImages = paginatedImages.slice(startIndex, endIndex);
+    if (images) {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = currentPage * itemsPerPage;
+      const paginatedImages = searchText ? filteredImages : images;
+      filteredImages = paginatedImages.slice(startIndex, endIndex);
+    }
   }
 
   function goToPage(pageNumber) {
@@ -81,19 +84,34 @@
   }
 
   fetchImages();
+
+  function sortData() {
+    if (sortAsc) {
+      filteredImages = images.sort((a, b) => a.public_id.localeCompare(b.public_id));
+    } else {
+      filteredImages = images.sort((a, b) => b.public_id.localeCompare(a.public_id));
+    }
+  }
+
+  function toggleSortOrder() {
+    sortAsc = !sortAsc;
+    sortData();
+  }
 </script>
-
-
 
 <div>
   <input type="text" bind:value={searchText} placeholder="Search by Name" on:input={handleSearchInput} />
   <button on:click={searchImages}>Search</button>
+   <span class="spacer"></span>
+  <button class="btn btn-primary" on:click={toggleSortOrder}>
+    Sort
+  </button>
 </div>
 
 <div class="image-container">
   {#each filteredImages as image}
   <div class="image-item">
-    <img src={image.url} alt={image.public_id}  style="width: 400px; height: 200px;" on:click={() => selectedImage = image}/>
+    <img src={image.url} alt={image.public_id} style="width: 400px; height: 200px;" on:click={() => selectedImage = image} />
     <div class="image-name">{image.public_id}</div>
   </div>
   {/each}
@@ -101,10 +119,7 @@
 
 <div class="pagination">
   {#each Array.from({ length: Math.ceil(images.length / itemsPerPage) }) as _, index}
-  <div
-    class="pagination-item {index + 1 === currentPage ? 'active' : ''}"
-    on:click={() => goToPage(index + 1)}
-  >
+  <div class="pagination-item {index + 1 === currentPage ? 'active' : ''}" on:click={() => goToPage(index + 1)}>
     {index + 1}
   </div>
   {/each}
@@ -114,12 +129,11 @@
   Upload images
 </button>
 
-	{#if selectedImage}
+{#if selectedImage}
 <div class="modal">
   <div class="modal-content">
     <button class="close" on:click={() => selectedImage = null}>Close</button>
     <img src={selectedImage.url} alt={selectedImage.public_id} style="width: 900px; height: 550px;" />
-   
   </div>
 </div>
 {/if}
@@ -142,8 +156,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
-   margin-top: 50px;
-    margin-bottom: 20px; 
+    margin-top: 50px;
+    margin-bottom: 20px;
   }
 
   .image-item {
@@ -186,7 +200,8 @@
     background-color: #4caf50;
     color: #fff;
   }
-  	.modal {
+
+  .modal {
     display: block;
     position: fixed;
     z-index: 999;
@@ -194,8 +209,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-	background-color: hsl(0, 12%, 7%);
-	
+    background-color: hsl(0, 12%, 7%);
   }
 
   .modal-content {
@@ -207,9 +221,9 @@
     margin: auto;
     margin-top: 10%;
     width: 80%;
-	 margin-top: 80px;
+    margin-top: 80px;
     max-width: 800px;
-  background-color: hsl(0, 12%, 7%);
+    background-color: hsl(0, 12%, 7%);
     padding: 20px;
     border-radius: 4px;
   }
@@ -223,4 +237,7 @@
     color: #ea1e40;
     cursor: pointer;
   }
+     .spacer {
+  margin: 0 50px;
+}
 </style>
