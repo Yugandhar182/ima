@@ -85,14 +85,15 @@
 
   fetchImages();
 
-  function sortData() {
+    function sortData() {
     if (sortAsc) {
-      filteredImages = images.sort((a, b) => a.public_id.localeCompare(b.public_id));
+      images = images.sort((a, b) => a.public_id.localeCompare(b.public_id));
     } else {
-      filteredImages = images.sort((a, b) => b.public_id.localeCompare(a.public_id));
+      images = images.sort((a, b) => b.public_id.localeCompare(a.public_id));
     }
-  }
 
+    paginateImages();
+  }
   function toggleSortOrder() {
     sortAsc = !sortAsc;
     sortData();
